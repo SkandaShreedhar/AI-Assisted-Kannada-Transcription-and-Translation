@@ -18,6 +18,7 @@ INPUT_AUDIO_FOLDER = './INPUT/AUDIO'
 RESULTS_FOLDER = Path('./RESULTS')
 
 models1 = [
+    '01_DENOISER_DNS_64.py',
     '02_SPEECH_SEG_FFMPEG.py',
     '03a_ASR_ADDY88_W2V.py',
     '04_PUNCT_PCS47LANG.py',
@@ -27,6 +28,7 @@ models1 = [
 ]
 
 models2 = [
+    '01_DENOISER_DNS_64.py',
     '02_SPEECH_SEG_FFMPEG.py',
     '03b_ASR_VAS22_WHISPER.py',
     '04_PUNCT_PCS47LANG.py',
@@ -36,6 +38,7 @@ models2 = [
 ]
 
 models3 = [
+    '01_DENOISER_DNS_64.py',
     '02_SPEECH_SEG_FFMPEG.py',
     '03c_ASR_AMO_WAV2VEC.py',
     '04_PUNCT_PCS47LANG.py',
