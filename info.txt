@@ -1,0 +1,97 @@
+##############################################
+
+Model: 02_SPEECH_SEG_FFMPEG.py
+Elapsed Time: 20.70 seconds
+Memory Usage: 32.43 MB
+CPU Usage: 0.00%
+
+Model: 03a_ASR_ADDY88_W2V.py
+Elapsed Time: 8.85 seconds
+Memory Usage: 32.62 MB
+CPU Usage: 0.00%
+
+Model: 04_PUNCT_PCS47LANG.py
+Elapsed Time: 6.89 seconds
+Memory Usage: 32.66 MB
+CPU Usage: 0.00%
+
+Model: 05_TRANSLIT_OM.py
+Elapsed Time: 0.15 seconds
+Memory Usage: 32.66 MB
+CPU Usage: 1.50%
+
+Model: 06_TRANSLATE_AI4BHARAT.py
+Elapsed Time: 30.23 seconds
+Memory Usage: 32.32 MB
+CPU Usage: 1.50%
+
+Model: 07_ENG_GRAMMAR_VENNIFY.py
+Elapsed Time: 20.06 seconds
+Memory Usage: 32.30 MB
+CPU Usage: 0.00%
+
+##############################################
+
+Model: 02_SPEECH_SEG_FFMPEG.py
+Elapsed Time: 17.88 seconds
+Memory Usage: 32.30 MB
+CPU Usage: 0.00%
+
+Model: 03b_ASR_VAS22_WHISPER.py
+Elapsed Time: 40.65 seconds
+Memory Usage: 32.55 MB
+CPU Usage: 1.50%
+
+Model: 04_PUNCT_PCS47LANG.py
+Elapsed Time: 6.36 seconds
+Memory Usage: 32.58 MB
+CPU Usage: 0.00%
+
+Model: 05_TRANSLIT_OM.py
+Elapsed Time: 0.18 seconds
+Memory Usage: 32.57 MB
+CPU Usage: 1.50%
+
+Model: 06_TRANSLATE_AI4BHARAT.py
+Elapsed Time: 28.13 seconds
+Memory Usage: 32.59 MB
+CPU Usage: 3.10%
+
+Model: 07_ENG_GRAMMAR_VENNIFY.py
+Elapsed Time: 18.33 seconds
+Memory Usage: 32.54 MB
+CPU Usage: 0.00%
+
+##############################################
+
+Model: 02_SPEECH_SEG_FFMPEG.py
+Elapsed Time: 18.79 seconds
+Memory Usage: 32.41 MB
+CPU Usage: 0.00%
+
+Model: 03c_ASR_AMO_WAV2VEC.py
+Elapsed Time: 13.87 seconds
+Memory Usage: 32.73 MB
+CPU Usage: 0.00%
+
+Model: 04_PUNCT_PCS47LANG.py
+Elapsed Time: 6.93 seconds
+Memory Usage: 32.76 MB
+CPU Usage: 0.00%
+
+Model: 05_TRANSLIT_OM.py
+Elapsed Time: 0.18 seconds
+Memory Usage: 32.75 MB
+CPU Usage: 3.00%
+
+Model: 06_TRANSLATE_AI4BHARAT.py
+Elapsed Time: 26.53 seconds
+Memory Usage: 32.72 MB
+CPU Usage: 0.00%
+
+Model: 07_ENG_GRAMMAR_VENNIFY.py
+Elapsed Time: 19.46 seconds
+Memory Usage: 32.70 MB
+CPU Usage: 1.60%
+
+##############################################
