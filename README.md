@@ -1,7 +1,3 @@
 # AI-Assisted-Kannada-Transcription-and-Translation
 
 We present a comprehensive pipeline for processing Kannada audio, leveraging state-of-the-art pre-trained models from Hugging Face. The pipeline is designed to handle multiple stages of audio processing, including denoising, speech segmentation, automatic speech recognition (ASR), punctuation, transliteration, translation, and grammar checking. The novelty of our approach lies in the seamless integration of these models into a user-friendly interface, allowing users to upload or record audio and receive outputs at each stage with the option to edit and classify the results.
-
-Our system's modular architecture allows users to run the pipeline up to a specified stage based on their requirements, offering flexibility and control over the processing tasks. Despite the inherent limitations in handling larger audio files, our pipeline demonstrates robust performance on shorter clips, making it suitable for applications in language learning, accessibility, and content creation.
-
-We discuss the technical challenges encountered in integrating these models and managing intermediate outputs, providing insights into the practical aspects of building such a system. Additionally, we propose future directions to enhance scalability and efficiency. This work contributes to the applied engineering field by providing a practical, user-centric solution for Kannada audio processing, leveraging existing AI technologies to address real-world needs.
