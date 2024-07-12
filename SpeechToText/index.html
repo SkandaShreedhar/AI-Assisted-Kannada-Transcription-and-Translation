@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Assisted Kannada Speech Transcription and Translation Dashboard</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --background-color: #f6f8fa;
+            --card-background: #ffffff;
+            --text-color: #333333;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            background-color: var(--background-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        h1 {
+            text-align: center;
+            color: var(--secondary-color);
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+        .column {
+            background-color: var(--card-background);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        .column:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        .column h2 {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+            margin-top: 0;
+            font-size: 1.5em;
+        }
+        .file, .audio {
+            margin-bottom: 20px;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+        .file h3, .audio h3 {
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+        .file pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            background-color: #f8f8f8;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            font-size: 14px;
+            margin: 0;
+        }
+        button {
+            padding: 12px 24px;
+            font-size: 16px;
+            color: #fff;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        #runButton { background-color: var(--primary-color); }
+        #runButton:hover { background-color: #2980b9; }
+        #submitButton { background-color: #2ecc71; }
+        #submit { background-color: #2ecc71; }
+        #submitButton:hover { background-color: #27ae60; }
+        #uploadButton { background-color: var(--secondary-color); }
+        #uploadButton:hover { background-color: #34495e; }
+        #recordButton { background-color: #e74c3c; }
+        #recordButton:hover { background-color: #c0392b; }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        button:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        audio {
+            width: 100%;
+            margin-top: 10px;
+            border-radius: 30px;
+        }
+        .file-controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        .file-controls button, .file-controls select {
+            padding: 5px 10px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .editable {
+            border: 1px solid #1c7ad9;
+            padding: 5px;
+            min-height: 100px;
+            white-space: pre-wrap;
+            overflow-y: auto;
+            max-height: 300px;
+        }
+        .editing { background-color: #f0f0f0; }
+        #fileInput { display: none; }
+    </style>
+</head>
+<body>
+    <h1>AI Assisted Kannada Speech Transcription and Translation Dashboard</h1>
+    <div class="button-container">
+        <input type="file" id="fileInput" accept="audio/*" />
+        <button id="uploadButton">Upload Audio</button>
+        <button id="recordButton">Record Audio</button>
+        <select id="asr-model-select">
+            <option value="1">03a_ASR_ADDY88</option>
+            <option value="2">03b_ASR_WHISPER</option>
+            <option value="3">03c_ASR_WAV2VEC</option>
+        </select>
+        <button id="submit" onclick="storeModelIndex()">Submit</button>
+        <button id="runButton">Run Scripts</button>
+        <button id="submitButton">Process</button>
+    </div>
+    <div class="container">
+        <div class="column">
+            <h2>Speech Separation</h2>
+            <div id="speechSeparationOutput" class="audio"></div>
+        </div>
+        <div class="column">
+            <h2>Transcription</h2>
+            <div id="transcriptionOutput" class="file"></div>
+        </div>
+        <div class="column">
+            <h2>Punctuation</h2>
+            <div id="punctuationOutput" class="file"></div>
+        </div>
+        <div class="column">
+            <h2>Transliteration</h2>
+            <div id="transliterationOutput" class="file"></div>
+        </div>
+        <div class="column">
+            <h2>Translation</h2>
+            <div id="translationOutput" class="file"></div>
+        </div>
+        <div class="column">
+            <h2>Grammar</h2>
+            <div id="grammarOutput" class="file"></div>
+        </div>
+    </div>
+    <script>
+        let currentModelIndex = 0;
+        var models = [
+            'Speech Segmentation',
+            'Automatic Speech Recognition',
+            'Punctuation',
+            'Transliteration',
+            'Translation',
+            'Grammar and Spell Check'
+        ];
+
+        let model_index = 1;
+
+        function storeModelIndex() {
+            const selectElement = document.getElementById('asr-model-select');
+            model_index = selectElement.value;
+            console.log('Selected model index:', model_index);
+        }
+
+        document.getElementById('runButton').addEventListener('click', function() {
+            this.disabled = true;
+            currentModelIndex = 0;
+            runNextModel();
+        });
+
+        function runNextModel() {
+            if (currentModelIndex >= models.length) {
+                document.getElementById('runButton').disabled = false;
+                document.getElementById('runButton').textContent = 'Run Scripts';
+                return;
+            }
+
+            var model = models[currentModelIndex];
+            document.getElementById('runButton').textContent = 'Running ' + model + '...';
+
+            fetch('/run-script/' + model_index + '/' + currentModelIndex, { 
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(function(response) { return response.json(); })
+            .then(function(data) {
+                if (data.speech_separation) displayFiles('speechSeparationOutput', data.speech_separation, 'audio');
+                if (data.transcription) displayFiles('transcriptionOutput', data.transcription, 'file');
+                if (data.punctuation) displayFiles('punctuationOutput', data.punctuation, 'file');
+                if (data.transliteration) displayFiles('transliterationOutput', data.transliteration, 'file');
+                if (data.translation) displayFiles('translationOutput', data.translation, 'file');
+                if (data.grammar) displayFiles('grammarOutput', data.grammar, 'file');
+                
+                currentModelIndex++;
+                runNextModel();
+            })
+            .catch(function(error) {
+                console.error('Error:', error);
+                document.getElementById('runButton').disabled = false;
+                document.getElementById('runButton').textContent = 'Run Scripts';
+            });
+        }
+
+        function displayFiles(elementId, files, type) {
+            var element = document.getElementById(elementId);
+            element.innerHTML = '';
+            for (var filename in files) {
+                if (files.hasOwnProperty(filename)) {
+                    var content = files[filename];
+                    if (type === 'audio') {
+                        element.innerHTML += '<h3>' + filename + '</h3>' +
+                            '<audio controls>' +
+                            '<source src="' + content + '" type="audio/wav">' +
+                            'Your browser does not support the audio element.' +
+                            '</audio>';
+                    } else {
+                        var fileId = elementId + '' + filename.replace('.', '');
+                        element.innerHTML += '<h3>' + filename + '</h3>' +
+                            '<div class="editable" id="' + fileId + '" contenteditable="false">' + formatContent(content) + '</div>' +
+                            '<div class="file-controls">' +
+                            '<button onclick="editContent(\'' + fileId + '\')" id="submit">Edit</button>' +
+                            '<button onclick="saveContent(\'' + fileId + '\')" style="display:none;">Save</button>' +
+                            '<select id="' + fileId + '-dropdown">' +
+                                '<option value="good">Good Transcription</option>' +
+                                '<option value="bad">Bad Transcription</option>' +
+                            '</select>' +
+                            '</div>';
+                    }
+                }
+            }
+        }
+
+        function formatContent(content) {
+            return content.replace(/\n/g, '<br>').replace(/ /g, '&nbsp;');
+        }
+
+        function editContent(id) {
+            var div = document.getElementById(id);
+            div.contentEditable = true;
+            div.classList.add('editing');
+            div.nextElementSibling.querySelector('button[onclick^="saveContent"]').style.display = 'inline-block';
+            div.nextElementSibling.querySelector('button[onclick^="editContent"]').style.display = 'none';
+        }
+
+        function saveContent(id) {
+            var div = document.getElementById(id);
+            div.contentEditable = false;
+            div.classList.remove('editing');
+            div.nextElementSibling.querySelector('button[onclick^="saveContent"]').style.display = 'none';
+            div.nextElementSibling.querySelector('button[onclick^="editContent"]').style.display = 'inline-block';
+
+            fetch('/save-content', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id: id,
+                    content: div.innerText
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Content saved:', data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
+
+        document.getElementById('submitButton').addEventListener('click', function() {
+            let data = [];
+            let goodTranscriptions = [];
+            let badTranscriptions = [];
+
+            document.querySelectorAll('.editable').forEach(function(div) {
+                const content = div.innerText;
+                const dropdownValue = document.getElementById(div.id + '-dropdown').value;
+
+                if (dropdownValue === 'good') {
+                    goodTranscriptions.push({ filename: div.id, content: content });
+                } else {
+                    badTranscriptions.push({ filename: div.id, content: content });
+                }
+            });
+
+            data.push({ goodTranscriptions: goodTranscriptions, badTranscriptions: badTranscriptions });
+
+            fetch('/submit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+            .then(function(response) { return response.json(); })
+            .then(function(data) {
+                alert('Submissions saved successfully.');
+            })
+            .catch(function(error) {
+                console.error('Error:', error);
+                alert('Error saving submissions. Please try again.');
+            });
+        });
+
+        document.getElementById('uploadButton').addEventListener('click', function() {
+            document.getElementById('fileInput').click();
+        });
+
+        document.getElementById('fileInput').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const formData = new FormData();
+                formData.append('audio', file);
+
+                fetch('/upload-audio', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Audio file uploaded successfully!');
+                    } else {
+                        alert('Error uploading audio file. Please try again.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error uploading audio file. Please try again.');
+                });
+            }
+        });
+
+        // New code for audio recording
+        let mediaRecorder;
+        let audioChunks = [];
+        const recordButton = document.getElementById('recordButton');
+
+        recordButton.addEventListener('click', toggleRecording);
+
+        async function toggleRecording() {
+            if (mediaRecorder && mediaRecorder.state === "recording") {
+                mediaRecorder.stop();
+                recordButton.textContent = "Record Audio";
+                recordButton.style.backgroundColor = "#e74c3c";
+            } else {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                mediaRecorder.start();
+
+                audioChunks = [];
+                mediaRecorder.addEventListener("dataavailable", event => {
+                    audioChunks.push(event.data);
+                });
+
+                mediaRecorder.addEventListener("stop", () => {
+                    const audioBlob = new Blob(audioChunks, { type: "audio/mp3" });
+                    sendAudioToServer(audioBlob);
+                });
+
+                recordButton.textContent = "Stop Recording";
+                recordButton.style.backgroundColor = "#27ae60";
+            }
+        }
+
+        function sendAudioToServer(audioBlob) {
+            const formData = new FormData();
+            formData.append('audio', audioBlob, 'recorded_audio.mp3');
+
+            fetch('/upload-audio', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Audio recording uploaded successfully!');
+                } else {
+                    alert('Error uploading audio recording. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error uploading audio recording. Please try again.');
+            });
+        }
+    </script>
+</body>
+</html>
