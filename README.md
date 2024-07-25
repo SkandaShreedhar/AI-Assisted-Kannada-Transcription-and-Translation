@@ -7,3 +7,7 @@ We present a comprehensive pipeline for processing Kannada audio, leveraging sta
 ![Pipeline](Screenshots/Pipeline.png)
 
 
+##Ouput 
+![Output](Screenshots/OutputScreenshot.png)
+
+
