@@ -8,6 +8,6 @@ We present a comprehensive pipeline for processing Kannada audio, leveraging sta
 
 
 ##Ouput 
-![Output](Screenshots/Output Screenshot.png)
+![Output](Screenshots/OutputScreenshot.png)
 
 
